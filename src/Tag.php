@@ -26,13 +26,19 @@ class Tag extends Model implements Sortable
         return $query->where('type', $type)->orderBy('order_column');
     }
 
-    public function scopeContaining(Builder $query, string $name, $locale = null): Builder
+    public function scopeContaining(Builder $query, string $name = null, $locale = null): Builder
     {
         $locale = $locale ?? app()->getLocale();
 
-        $locale = '"'.$locale.'"';
+        /**
+         * Laravel 5.7: this should work for  MySQL 5.7, PostgreSQL,
+         * SQL Server 2016, and SQLite 3.9.0 (with the JSON1 extension).
+         *
+         * If $name is null all entries returned.
+         */
+        $query = $query->where("name->{$locale}", 'like', '%'.strtolower($name).'%');
 
-        return $query->whereRaw("LOWER(JSON_EXTRACT(name, '$.".$locale."')) like ?", ['"%'.strtolower($name).'%"']);
+        return $query;
     }
 
     /**
