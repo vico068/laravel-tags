@@ -2,6 +2,23 @@
 
 All notable changes to `laravel-tags` will be documented in this file
 
+## 2.4.1 - 2019-03-06
+
+- performance enhanchements
+
+## 2.4.0 - 2019-03-01
+
+- add `tagsTranslated`
+
+## 2.3.0 - 2019-02-27
+
+- drop support for Laravel 5.7 and below
+- drop support for PHP 7.1 and below
+
+## 2.2.2 - 2019-02-27
+
+- add support for Laravel 5.8
+
 ## 2.2.1 - 2019-01-19
 
 - use morph map name for taggable_type if it exists

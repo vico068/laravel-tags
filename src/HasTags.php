@@ -20,9 +20,11 @@ trait HasTags
     public static function bootHasTags()
     {
         static::created(function (Model $taggableModel) {
-            $taggableModel->attachTags($taggableModel->queuedTags);
+            if (count($taggableModel->queuedTags) > 0) {
+                $taggableModel->attachTags($taggableModel->queuedTags);
 
-            $taggableModel->queuedTags = [];
+                $taggableModel->queuedTags = [];
+            }
         });
 
         static::deleted(function (Model $deletedModel) {
@@ -36,6 +38,21 @@ trait HasTags
     {
         return $this
             ->morphToMany(self::getTagClassName(), 'taggable')
+            ->orderBy('order_column');
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function tagsTranslated($locale = null): MorphToMany
+    {
+        $locale = ! is_null($locale) ? $locale : app()->getLocale();
+
+        return $this
+            ->morphToMany(self::getTagClassName(), 'taggable')
+            ->select('*')
+            ->selectRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"{$locale}\"')) as name_translated")
+            ->selectRaw("JSON_UNQUOTE(JSON_EXTRACT(slug, '$.\"{$locale}\"')) as slug_translated")
             ->orderBy('order_column');
     }
 
